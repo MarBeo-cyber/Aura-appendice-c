@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simulatore — Lo strumento al lavoro (Appendice C)</title>
+<style>
+/* ------------------------- chrome dell'host (posta) ---------------------- */
+:root {
+  --navy: #1F4E79; --navy-scuro: #163857; --inchiostro: #1c2733; --carta: #faf8f3;
+  --host-bordo: #e3e6ea; --host-grigio: #5b6570; --host-fondo-2: #f5f6f8;
+  --host-blu: #0f6cbd;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; font: 13px/1.5 "Segoe UI", system-ui, sans-serif; color: var(--inchiostro); background: #fff; }
+.app { display: grid; grid-template-rows: 44px 1fr; height: 100vh; }
+.barra {
+  display: flex; align-items: center; gap: 14px; padding: 0 16px;
+  border-bottom: 1px solid var(--host-bordo); background: #fff;
+}
+.barra-logo { width: 20px; height: 20px; border-radius: 4px; }
+.barra-titolo { font-weight: 600; }
+.barra-nota { color: var(--host-grigio); font-size: 11.5px; }
+.corpo { display: grid; grid-template-columns: 270px 1fr 410px; min-height: 0; }
+
+.lista { border-right: 1px solid var(--host-bordo); overflow-y: auto; background: var(--host-fondo-2); }
+.lista-testa { padding: 10px 14px; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--host-grigio); }
+.msg-item { padding: 10px 14px; border-bottom: 1px solid var(--host-bordo); cursor: pointer; background: #fff; }
+.msg-item:hover { background: #f0f3f7; }
+.msg-item.attivo { border-left: 3px solid var(--host-blu); background: #eef4fb; }
+.msg-da { font-weight: 600; font-size: 12.5px; }
+.msg-ogg { font-size: 12.5px; }
+.msg-prev { color: var(--host-grigio); font-size: 11.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.msg-ora { float: right; color: var(--host-grigio); font-size: 11px; }
+
+.lettura { overflow-y: auto; padding: 18px 26px 40px; }
+.banner {
+  display: none; margin: 0 0 14px; padding: 8px 12px; border: 1px solid #cfe0f4;
+  background: #eef4fb; color: var(--inchiostro); border-radius: 4px; font-size: 12.5px;
+}
+.banner img { width: 14px; height: 14px; vertical-align: -2px; margin-right: 8px; }
+.mail-oggetto { font-size: 19px; font-weight: 600; margin: 2px 0 12px; }
+.mail-meta { display: flex; gap: 10px; align-items: baseline; border-bottom: 1px solid var(--host-bordo); padding-bottom: 12px; margin-bottom: 16px; }
+.mail-avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--host-blu); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 600; flex: none; }
+.mail-da { font-weight: 600; }
+.mail-a, .mail-data { color: var(--host-grigio); font-size: 12px; }
+.mail-corpo { font-size: 14px; max-width: 66ch; white-space: pre-wrap; }
+
+/* La nota appesa in coda al messaggio: tipografia del libro */
+.nota-in-coda {
+  margin-top: 22px; padding: 12px 14px 13px; max-width: 66ch;
+  background: var(--carta); border: 1px solid #e7e2d6; border-left: 3px solid var(--navy);
+  font-family: Georgia, "Times New Roman", serif; font-size: 14.5px; line-height: 1.62; color: var(--navy-scuro);
+}
+
+.riquadro { border-left: 1px solid var(--host-bordo); overflow-y: auto; }
+#pane { padding: 14px 14px 20px; }
+
+/* ------------------- stile del riquadro (come taskpane.css) -------------- */
+.pane-head { border-bottom: 1px solid var(--host-bordo); padding-bottom: 10px; margin-bottom: 12px; }
+.pane-titolo { font-size: 15px; font-weight: 600; }
+.pane-sotto { color: var(--host-grigio); font-size: 11.5px; margin-top: 2px; }
+.pane-controlli { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.pane-controlli label { display: block; font-size: 11px; color: var(--host-grigio); margin-bottom: 2px; }
+.pane-controlli select { font: inherit; padding: 4px 6px; border: 1px solid var(--host-bordo); border-radius: 4px; background: #fff; min-width: 150px; }
+.pane-tra { background: var(--host-fondo-2); border: 1px solid var(--host-bordo); border-radius: 6px; padding: 8px 8px 4px; }
+.tra-svg { width: 100%; height: auto; display: block; }
+.tra-linea { stroke: var(--navy); stroke-width: 1.5; opacity: .55; }
+.tra-capo { fill: var(--navy); opacity: .55; }
+.tra-punto { fill: #fff; stroke: var(--navy); stroke-width: 2; }
+.tra-punto.tra-ribalta { fill: var(--navy); }
+.tra-term { font: 10px "Segoe UI", sans-serif; fill: var(--inchiostro); text-anchor: middle; }
+.tra-glifo { font: 12px serif; fill: var(--navy); text-anchor: middle; }
+.tra-ruolo { font: 9.5px "Segoe UI", sans-serif; fill: var(--host-grigio); }
+.pane-misura { font-size: 11.5px; color: var(--host-grigio); padding: 4px 2px 6px; }
+.pane-misura strong { color: var(--inchiostro); }
+.pane-termini { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+.termine { border: 1px solid var(--host-bordo); border-radius: 6px; padding: 8px 10px; }
+.termine-ribalta { border-left: 3px solid var(--navy); }
+.termine-nome { font-weight: 600; margin-bottom: 5px; }
+.termine-nome .glifo { color: var(--navy); font-weight: 400; }
+.termine-letture { display: grid; grid-template-columns: 1fr; gap: 4px; }
+.lettura-riga { font-size: 12px; }
+.lettura-chi { display: inline-block; font-size: 10px; text-transform: uppercase; letter-spacing: .05em; color: var(--host-grigio); margin-right: 6px; min-width: 128px; }
+.pane-riga { font-size: 12px; margin-top: 10px; }
+.pane-contesto .rif { display: block; color: var(--host-grigio); font-size: 11px; margin-top: 2px; }
+.pane-motivo { font-size: 12px; color: var(--host-grigio); margin-top: 8px; font-style: italic; }
+.nota-libro { margin-top: 14px; background: var(--carta); border: 1px solid #e7e2d6; border-left: 3px solid var(--navy); border-radius: 2px; padding: 12px 14px 13px; }
+.nota-eyebrow { font: 10px/1.4 "Segoe UI", sans-serif; text-transform: uppercase; letter-spacing: .08em; color: var(--navy); margin-bottom: 7px; }
+.nota-testo { font-family: Georgia, "Times New Roman", serif; font-size: 14.5px; line-height: 1.62; color: var(--navy-scuro); }
+.pane-azioni { margin-top: 12px; display: flex; flex-direction: column; gap: 10px; }
+.btn { font: 13px "Segoe UI", sans-serif; padding: 7px 12px; border-radius: 4px; border: 1px solid var(--host-bordo); background: #fff; cursor: pointer; }
+.btn:focus-visible { outline: 2px solid var(--navy); outline-offset: 1px; }
+.btn-primario { background: var(--navy); border-color: var(--navy); color: #fff; }
+.btn-primario:disabled { opacity: .6; cursor: default; }
+.btn-quieto:hover { background: var(--host-fondo-2); }
+.pane-feedback { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.fb-label { font-size: 11.5px; color: var(--host-grigio); }
+.pane-vuoto { margin-top: 14px; border: 1px dashed var(--host-bordo); border-radius: 6px; padding: 14px; text-align: center; }
+.pane-vuoto-titolo { color: var(--host-grigio); font-size: 12.5px; }
+.pane-piede { margin-top: 16px; padding-top: 10px; border-top: 1px solid var(--host-bordo); font-size: 10.5px; color: var(--host-grigio); }
+/* v0.2 */
+.tra-linea-mis { stroke: var(--navy); stroke-width: 4; opacity: 1; stroke-linecap: round; }
+.pane-misura.banda-bassa strong:last-child { color: #4a7a53; }
+.pane-misura.banda-media strong:last-child { color: #9a6b1e; }
+.pane-misura.banda-alta strong:last-child { color: var(--navy); }
+.termine-d { display: inline-block; font: 10px "Segoe UI", sans-serif; color: var(--host-grigio); border: 1px solid var(--host-bordo); border-radius: 10px; padding: 0 6px; margin-left: 4px; vertical-align: 1px; }
+.pane-interrogatore { margin-top: 14px; border-top: 1px solid var(--host-bordo); padding-top: 12px; }
+.inter-eyebrow { font: 11px/1.45 "Segoe UI", sans-serif; color: var(--navy); background: #eef3f8; border: 1px solid #dbe6f1; border-radius: 5px; padding: 7px 9px; margin-bottom: 9px; }
+.inter-prompt { font: 11px/1.5 ui-monospace, "Consolas", monospace; white-space: pre-wrap; word-break: break-word; background: #0f1b28; color: #d7e2ee; border-radius: 6px; padding: 11px 12px; max-height: 230px; overflow: auto; margin: 0; }
+.inter-barra { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 9px; }
+.inter-incolla { margin-top: 11px; display: flex; flex-direction: column; gap: 6px; }
+.inter-label { font-size: 11px; color: var(--host-grigio); }
+.inter-textarea { font: 12.5px/1.5 "Segoe UI", system-ui, sans-serif; padding: 8px 9px; border: 1px solid var(--host-bordo); border-radius: 5px; resize: vertical; min-height: 58px; width: 100%; }
+.inter-textarea:focus-visible { outline: 2px solid var(--navy); outline-offset: 1px; border-color: var(--navy); }
+.inter-errore { font-size: 12px; color: #8a3123; background: #fbeeec; border: 1px solid #f0d7d2; border-radius: 5px; padding: 8px 10px; margin-top: 9px; }
+.pane-servizio { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+.btn-testo { font: 12px "Segoe UI", sans-serif; background: none; border: none; color: var(--navy); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; padding: 2px 0; text-align: left; }
+.btn-testo:hover { color: var(--navy-scuro); }
+.pane-benchmark > summary { font: 12px "Segoe UI", sans-serif; color: var(--host-grigio); cursor: pointer; padding: 4px 0; list-style-position: inside; }
+.pane-benchmark[open] > summary { color: var(--inchiostro); margin-bottom: 4px; }
+.pane-benchmark .nota-libro { opacity: .92; border-left-color: var(--host-grigio); }
+.pane-benchmark .nota-eyebrow { color: var(--host-grigio); }
+@media (prefers-reduced-motion: no-preference) {
+  .nota-libro, .nota-in-coda { animation: nota-in 240ms ease-out; }
+  @keyframes nota-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+}
+@media (max-width: 980px) { .corpo { grid-template-columns: 1fr; } .lista, .riquadro { display: none; } }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="barra">
+    <svg class="barra-logo" viewBox="0 0 24 24" aria-hidden="true"><rect x="0.5" y="0.5" width="23" height="23" rx="4" fill="#faf8f3" stroke="#1F4E79"/><circle cx="9.5" cy="12.5" r="5.4" fill="none" stroke="#1F4E79" stroke-width="1.6"/><circle cx="14.5" cy="12.5" r="5.4" fill="none" stroke="#1F4E79" stroke-width="1.6"/><path d="M12 8.4 a5.4 5.4 0 0 1 0 8.2 a5.4 5.4 0 0 1 0 -8.2 z" fill="#1F4E79"/></svg>
+    <div class="barra-titolo">Posta &mdash; banca-demo</div>
+    <div class="barra-nota">Simulatore dell&rsquo;Appendice C &middot; i dati restano in locale &middot; le persone e l&rsquo;episodio sono costruiti</div>
+  </div>
+  <div class="corpo">
+    <div class="lista">
+      <div class="lista-testa">Posta in arrivo &mdash; caselle dimostrative</div>
+      <div id="lista-msg"></div>
+    </div>
+    <div class="lettura">
+      <div class="banner" id="banner"></div>
+      <div class="mail-oggetto" id="m-oggetto"></div>
+      <div class="mail-meta">
+        <div class="mail-avatar" id="m-avatar"></div>
+        <div>
+          <div class="mail-da" id="m-da"></div>
+          <div class="mail-a" id="m-a"></div>
+          <div class="mail-data" id="m-data"></div>
+        </div>
+      </div>
+      <div class="mail-corpo" id="m-corpo"></div>
+      <div id="m-nota"></div>
+    </div>
+    <div class="riquadro"><div id="pane"></div></div>
+  </div>
+</div>
+
+<script>
+/*__ENGINE__*/
+</script>
+<script>
+/*__PANEUI__*/
+</script>
+<script>
+(function () {
+  "use strict";
+
+  var MESSAGGI = [
+    {
+      id: "canonico",
+      da: "Continuit\u00E0 Operativa", daEmail: "continuita.operativa@banca-demo.example",
+      a: "Conformit\u00E0", aEmail: "conformita@banca-demo.example",
+      oggetto: "Filtro antifrode \u2014 aggiornamento",
+      ora: "ven 17:28", dataISO: "2026-07-03T17:28:00+02:00",
+      corpo: "Ciao, ti aggiorno sull\u2019intermittenza di oggi sul filtro antifrode. Situazione rientrata: l\u2019impatto \u00E8 stato contenuto, i pagamenti trattenuti sono ripartiti da soli al ripristino. Non ho aperto un incident formale perch\u00E9 la cosa si \u00E8 chiusa in fretta e nessun cliente ne ha risentito \u2014 direi che possiamo derubricarla. Ti giro il log per completezza. Buon weekend."
+    },
+    {
+      id: "concordante",
+      da: "IT / Sistemi", daEmail: "it.sistemi@banca-demo.example",
+      a: "Continuit\u00E0 Operativa", aEmail: "continuita.operativa@banca-demo.example",
+      oggetto: "URGENTE \u2014 intervento critico sul nodo pagamenti",
+      ora: "ven 15:02", dataISO: "2026-07-03T15:02:00+02:00",
+      corpo: "Stanotte dalle 23:00 alle 01:00 \u00E8 previsto un intervento critico e urgente sul nodo dei pagamenti. Il servizio sar\u00E0 degradato per brevi finestre; il failover \u00E8 pronto e presidiato. Vi aggiorniamo a fine intervento."
+    },
+    {
+      id: "generico",
+      da: "Rete Commerciale", daEmail: "rete.commerciale@banca-demo.example",
+      a: "IT / Sistemi", aEmail: "it.sistemi@banca-demo.example",
+      oggetto: "Pratica cliente \u2014 sollecito",
+      ora: "gio 11:40", dataISO: "2026-07-02T11:40:00+02:00",
+      corpo: "Buongiorno, il cliente segnala che la sua pratica risulta presa in carico da tre giorni ma non ha ancora riscontri. Per lui \u00E8 urgente: potete dirmi a che punto siamo, cos\u00EC lo richiamo in giornata?"
+    }
+  ];
+
+  var attivo = MESSAGGI[0];
+  var log = [];
+
+  function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+
+  function renderLista() {
+    var box = document.getElementById("lista-msg");
+    box.innerHTML = "";
+    MESSAGGI.forEach(function (m) {
+      var d = document.createElement("div");
+      d.className = "msg-item" + (m.id === attivo.id ? " attivo" : "");
+      d.innerHTML = '<span class="msg-ora">' + esc(m.ora) + '</span><div class="msg-da">' + esc(m.da) +
+        '</div><div class="msg-ogg">' + esc(m.oggetto) + '</div><div class="msg-prev">' + esc(m.corpo) + "</div>";
+      d.onclick = function () { attivo = m; renderTutto(); };
+      box.appendChild(d);
+    });
+  }
+
+  function renderMessaggio() {
+    document.getElementById("m-oggetto").textContent = attivo.oggetto;
+    document.getElementById("m-avatar").textContent = attivo.da.replace(/[^A-Za-z\u00C0-\u00FF]/g, "").substring(0, 2).toUpperCase();
+    document.getElementById("m-da").textContent = attivo.da + " <" + attivo.daEmail + ">";
+    document.getElementById("m-a").textContent = "A: " + attivo.a + " <" + attivo.aEmail + ">";
+    document.getElementById("m-data").textContent = attivo.ora + " \u00B7 " + new Date(attivo.dataISO).toLocaleDateString("it-IT", { day: "numeric", month: "long", year: "numeric" });
+    document.getElementById("m-corpo").textContent = attivo.corpo;
+    document.getElementById("m-nota").innerHTML = "";
+    var b = document.getElementById("banner");
+    b.style.display = "none"; b.innerHTML = "";
+  }
+
+  function adapter() {
+    return {
+      capacita: { appendNote: true, banner: true },
+      apiConfig: null, /* simulatore offline: solo prompt copia-incolla e fallback locale */
+      appendNote: function (nota) {
+        document.getElementById("m-nota").innerHTML = '<div class="nota-in-coda">' + esc(nota) + "</div>";
+      },
+      banner: function (breve) {
+        var b = document.getElementById("banner");
+        b.style.display = "block";
+        b.innerHTML = '\u24D8 ' + esc(breve);
+      },
+      log: function (e) { e.t = new Date().toISOString(); e.msg = attivo.id; log.push(e); }
+    };
+  }
+
+  function selettore(id, valore, etichetta) {
+    var opts = Object.keys(TraEngine.RUOLI).map(function (k) {
+      return '<option value="' + k + '"' + (k === valore ? " selected" : "") + ">" + TraEngine.RUOLI[k].label + "</option>";
+    }).join("");
+    return '<div><label for="' + id + '">' + etichetta + '</label><select id="' + id + '">' + opts + "</select></div>";
+  }
+
+  function renderPane() {
+    var pane = document.getElementById("pane");
+    var ruoloMittente = TraEngine.rubricaDemo[attivo.daEmail] || "non_dichiarato";
+    var ruoloLettore = TraEngine.rubricaDemo[attivo.aEmail] || "non_dichiarato";
+
+    function ciclo() {
+      var r = TraEngine.analyzeMessage({
+        testo: attivo.corpo, ruoloMittente: ruoloMittente,
+        ruoloDestinatario: ruoloLettore, dateISO: attivo.dataISO
+      });
+      pane.innerHTML = "";
+      var controlli = document.createElement("div");
+      controlli.className = "pane-controlli";
+      controlli.innerHTML = selettore("sel-mittente", ruoloMittente, "Ruolo del mittente (dichiarato)") +
+                            selettore("sel-lettore", ruoloLettore, "Ruolo di chi legge (dichiarato)");
+      var corpo = document.createElement("div");
+      PaneUI.render(corpo, r, adapter());
+      pane.appendChild(controlli);
+      pane.appendChild(corpo);
+      document.getElementById("sel-mittente").onchange = function () { ruoloMittente = this.value; ciclo(); };
+      document.getElementById("sel-lettore").onchange = function () { ruoloLettore = this.value; ciclo(); };
+    }
+    ciclo();
+  }
+
+  function renderTutto() { renderLista(); renderMessaggio(); renderPane(); }
+  renderTutto();
+})();
+</script>
+</body>
+</html>

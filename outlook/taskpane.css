@@ -1,0 +1,167 @@
+/* ============================================================================
+   Stile del riquadro "Lo strumento" (Appendice C).
+   Scelta di progetto: l'host parla la lingua visiva dell'applicazione
+   (sans di sistema, grigi neutri); la NOTA parla la tipografia del libro
+   (Georgia, navy #1F4E79, fondo carta). Il confine visivo fra i due
+   registri è il "tra" reso visibile.
+   ============================================================================ */
+:root {
+  --navy: #1F4E79;
+  --navy-scuro: #163857;
+  --inchiostro: #1c2733;
+  --carta: #faf8f3;
+  --host-fondo: #ffffff;
+  --host-bordo: #e3e6ea;
+  --host-grigio: #5b6570;
+  --host-fondo-2: #f5f6f8;
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0;
+  background: var(--host-fondo);
+  color: var(--inchiostro);
+  font: 13px/1.5 "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+#pane { padding: 14px 14px 20px; max-width: 460px; }
+
+.pane-head { border-bottom: 1px solid var(--host-bordo); padding-bottom: 10px; margin-bottom: 12px; }
+.pane-titolo { font-size: 15px; font-weight: 600; letter-spacing: 0.01em; }
+.pane-sotto { color: var(--host-grigio); font-size: 11.5px; margin-top: 2px; }
+
+.pane-controlli { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.pane-controlli label { display: block; font-size: 11px; color: var(--host-grigio); margin-bottom: 2px; }
+.pane-controlli select {
+  font: inherit; padding: 4px 6px; border: 1px solid var(--host-bordo);
+  border-radius: 4px; background: #fff; min-width: 150px;
+}
+
+/* Linea del tra */
+.pane-tra { background: var(--host-fondo-2); border: 1px solid var(--host-bordo); border-radius: 6px; padding: 8px 8px 4px; }
+.tra-svg { width: 100%; height: auto; display: block; }
+.tra-linea { stroke: var(--navy); stroke-width: 1.5; opacity: 0.55; }
+.tra-capo { fill: var(--navy); opacity: 0.55; }
+.tra-punto { fill: #fff; stroke: var(--navy); stroke-width: 2; }
+.tra-punto.tra-ribalta { fill: var(--navy); }
+.tra-term { font: 10px "Segoe UI", sans-serif; fill: var(--inchiostro); text-anchor: middle; }
+.tra-glifo { font: 12px serif; fill: var(--navy); text-anchor: middle; }
+.tra-ruolo { font: 9.5px "Segoe UI", sans-serif; fill: var(--host-grigio); }
+.pane-misura { font-size: 11.5px; color: var(--host-grigio); padding: 4px 2px 6px; }
+.pane-misura strong { color: var(--inchiostro); }
+
+/* Termini: doppia lettura */
+.pane-termini { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+.termine { border: 1px solid var(--host-bordo); border-radius: 6px; padding: 8px 10px; }
+.termine-ribalta { border-left: 3px solid var(--navy); }
+.termine-nome { font-weight: 600; margin-bottom: 5px; }
+.termine-nome .glifo { color: var(--navy); font-weight: 400; }
+.termine-letture { display: grid; grid-template-columns: 1fr; gap: 4px; }
+.lettura { font-size: 12px; color: var(--inchiostro); }
+.lettura-chi {
+  display: inline-block; font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--host-grigio); margin-right: 6px; min-width: 128px;
+}
+
+.pane-riga { font-size: 12px; color: var(--inchiostro); margin-top: 10px; }
+.pane-contesto .rif { display: block; color: var(--host-grigio); font-size: 11px; margin-top: 2px; }
+.pane-motivo { font-size: 12px; color: var(--host-grigio); margin-top: 8px; font-style: italic; }
+
+/* La nota — tipografia del libro */
+.nota-libro {
+  margin-top: 14px;
+  background: var(--carta);
+  border: 1px solid #e7e2d6;
+  border-left: 3px solid var(--navy);
+  border-radius: 2px;
+  padding: 12px 14px 13px;
+}
+.nota-eyebrow {
+  font: 10px/1.4 "Segoe UI", sans-serif; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--navy); margin-bottom: 7px;
+}
+.nota-testo {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 14.5px; line-height: 1.62; color: var(--navy-scuro);
+}
+
+/* Azioni */
+.pane-azioni { margin-top: 12px; display: flex; flex-direction: column; gap: 10px; }
+.btn {
+  font: 13px "Segoe UI", sans-serif; padding: 7px 12px; border-radius: 4px;
+  border: 1px solid var(--host-bordo); background: #fff; cursor: pointer;
+}
+.btn:focus-visible { outline: 2px solid var(--navy); outline-offset: 1px; }
+.btn-primario { background: var(--navy); border-color: var(--navy); color: #fff; }
+.btn-primario:disabled { opacity: 0.6; cursor: default; }
+.btn-quieto:hover { background: var(--host-fondo-2); }
+.pane-feedback { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.fb-label { font-size: 11.5px; color: var(--host-grigio); }
+
+.pane-vuoto { margin-top: 14px; border: 1px dashed var(--host-bordo); border-radius: 6px; padding: 14px; text-align: center; }
+.pane-vuoto-titolo { color: var(--host-grigio); font-size: 12.5px; }
+
+.pane-piede {
+  margin-top: 16px; padding-top: 10px; border-top: 1px solid var(--host-bordo);
+  font-size: 10.5px; color: var(--host-grigio);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .nota-libro { animation: nota-in 240ms ease-out; }
+  @keyframes nota-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+}
+
+/* ============================================================================
+   v0.2 — distanza misurata, Interrogatore (prompt generato), incolla-risposta,
+   fallback locale, benchmark dal libro.
+   ============================================================================ */
+.tra-linea-mis { stroke: var(--navy); stroke-width: 4; opacity: 1; stroke-linecap: round; }
+.lettura-riga { font-size: 12px; color: var(--inchiostro); }
+
+/* Misura + bande */
+.pane-misura.banda-bassa strong:last-child { color: #4a7a53; }
+.pane-misura.banda-media strong:last-child { color: #9a6b1e; }
+.pane-misura.banda-alta strong:last-child  { color: var(--navy); }
+.termine-d {
+  display: inline-block; font: 10px "Segoe UI", sans-serif; color: var(--host-grigio);
+  border: 1px solid var(--host-bordo); border-radius: 10px; padding: 0 6px; margin-left: 4px; vertical-align: 1px;
+}
+
+/* Interrogatore */
+.pane-interrogatore { margin-top: 14px; border-top: 1px solid var(--host-bordo); padding-top: 12px; }
+.inter-eyebrow {
+  font: 11px/1.45 "Segoe UI", sans-serif; color: var(--navy);
+  background: #eef3f8; border: 1px solid #dbe6f1; border-radius: 5px; padding: 7px 9px; margin-bottom: 9px;
+}
+.inter-prompt {
+  font: 11px/1.5 ui-monospace, "SFMono-Regular", "Consolas", monospace;
+  white-space: pre-wrap; word-break: break-word;
+  background: #0f1b28; color: #d7e2ee; border-radius: 6px; padding: 11px 12px;
+  max-height: 210px; overflow: auto; margin: 0;
+}
+.inter-barra { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 9px; }
+.inter-incolla { margin-top: 11px; display: flex; flex-direction: column; gap: 6px; }
+.inter-label { font-size: 11px; color: var(--host-grigio); }
+.inter-textarea {
+  font: 12.5px/1.5 "Segoe UI", system-ui, sans-serif; padding: 8px 9px;
+  border: 1px solid var(--host-bordo); border-radius: 5px; resize: vertical; min-height: 58px; width: 100%;
+}
+.inter-textarea:focus-visible { outline: 2px solid var(--navy); outline-offset: 1px; border-color: var(--navy); }
+.inter-errore { font-size: 12px; color: #8a3123; background: #fbeeec; border: 1px solid #f0d7d2; border-radius: 5px; padding: 8px 10px; margin-top: 9px; }
+
+.pane-esito { }
+
+/* Servizio: fallback + benchmark */
+.pane-servizio { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+.btn-testo {
+  font: 12px "Segoe UI", sans-serif; background: none; border: none; color: var(--navy);
+  text-decoration: underline; text-underline-offset: 2px; cursor: pointer; padding: 2px 0; text-align: left;
+}
+.btn-testo:hover { color: var(--navy-scuro); }
+.pane-benchmark > summary {
+  font: 12px "Segoe UI", sans-serif; color: var(--host-grigio); cursor: pointer;
+  padding: 4px 0; list-style-position: inside;
+}
+.pane-benchmark > summary:hover { color: var(--inchiostro); }
+.pane-benchmark[open] > summary { color: var(--inchiostro); margin-bottom: 4px; }
+.pane-benchmark .nota-libro { opacity: 0.92; border-left-color: var(--host-grigio); }
+.pane-benchmark .nota-eyebrow { color: var(--host-grigio); }

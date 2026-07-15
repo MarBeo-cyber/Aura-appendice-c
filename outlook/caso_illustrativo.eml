@@ -1,0 +1,9 @@
+From: "Continuita Operativa (demo)" <continuita.operativa@banca-demo.example>
+To: "Conformita (demo)" <conformita@banca-demo.example>
+Subject: Filtro antifrode - aggiornamento
+Date: Fri, 03 Jul 2026 17:28:00 +0200
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+
+Ciao, ti aggiorno sull’intermittenza di oggi sul filtro antifrode. Situazione rientrata: l’impatto è stato contenuto, i pagamenti trattenuti sono ripartiti da soli al ripristino. Non ho aperto un incident formale perché la cosa si è chiusa in fretta e nessun cliente ne ha risentito — direi che possiamo derubricarla. Ti giro il log per completezza. Buon weekend.

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
+           xmlns:mailappor="http://schemas.microsoft.com/office/mailappversionoverrides/1.0"
+           xsi:type="MailApp">
+  <Id>273b33c5-a5c4-450a-a8cc-1e9f437cd632</Id>
+  <Version>0.1.0.0</Version>
+  <ProviderName>Marco Giuseppe Beozzi</ProviderName>
+  <DefaultLocale>it-IT</DefaultLocale>
+  <DisplayName DefaultValue="AURA — Lo strumento"/>
+  <Description DefaultValue="Rende visibile la distanza fra letture di ruolo della stessa parola, in coda al messaggio (La Mente e la Macchina, Appendice C). Non riscrive, non blocca, non decide."/>
+  <IconUrl DefaultValue="https://marbeo-cyber.github.io/aura-appendice-c/outlook/assets/icon-64.png"/>
+  <HighResolutionIconUrl DefaultValue="https://marbeo-cyber.github.io/aura-appendice-c/outlook/assets/icon-128.png"/>
+  <SupportUrl DefaultValue="https://github.com/MarBeo-cyber/aura-appendice-c"/>
+  <Hosts>
+    <Host Name="Mailbox"/>
+  </Hosts>
+  <Requirements>
+    <Sets>
+      <Set Name="Mailbox" MinVersion="1.5"/>
+    </Sets>
+  </Requirements>
+  <FormSettings>
+    <Form xsi:type="ItemRead">
+      <DesktopSettings>
+        <SourceLocation DefaultValue="https://marbeo-cyber.github.io/aura-appendice-c/outlook/taskpane.html"/>
+        <RequestedHeight>360</RequestedHeight>
+      </DesktopSettings>
+    </Form>
+  </FormSettings>
+  <Permissions>ReadItem</Permissions>
+  <Rule xsi:type="RuleCollection" Mode="Or">
+    <Rule xsi:type="ItemIs" ItemType="Message" FormType="Read"/>
+  </Rule>
+  <DisableEntityHighlighting>false</DisableEntityHighlighting>
+
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides" xsi:type="VersionOverridesV1_0">
+    <Requirements>
+      <bt:Sets DefaultMinVersion="1.5">
+        <bt:Set Name="Mailbox"/>
+      </bt:Sets>
+    </Requirements>
+    <Hosts>
+      <Host xsi:type="MailHost">
+        <DesktopFormFactor>
+          <ExtensionPoint xsi:type="MessageReadCommandSurface">
+            <OfficeTab id="TabDefault">
+              <Group id="gruppoAura">
+                <Label resid="gruppoLabel"/>
+                <Control xsi:type="Button" id="btnApriPane">
+                  <Label resid="bottoneLabel"/>
+                  <Supertip>
+                    <Title resid="bottoneLabel"/>
+                    <Description resid="bottoneTip"/>
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="icona16"/>
+                    <bt:Image size="32" resid="icona32"/>
+                    <bt:Image size="80" resid="icona80"/>
+                  </Icon>
+                  <Action xsi:type="ShowTaskpane">
+                    <SourceLocation resid="paneUrl"/>
+                    <SupportsPinning>true</SupportsPinning>
+                  </Action>
+                </Control>
+              </Group>
+            </OfficeTab>
+          </ExtensionPoint>
+        </DesktopFormFactor>
+      </Host>
+    </Hosts>
+    <Resources>
+      <bt:Images>
+        <bt:Image id="icona16" DefaultValue="https://marbeo-cyber.github.io/aura-appendice-c/outlook/assets/icon-16.png"/>
+        <bt:Image id="icona32" DefaultValue="https://marbeo-cyber.github.io/aura-appendice-c/outlook/assets/icon-32.png"/>
+        <bt:Image id="icona80" DefaultValue="https://marbeo-cyber.github.io/aura-appendice-c/outlook/assets/icon-80.png"/>
+      </bt:Images>
+      <bt:Urls>
+        <bt:Url id="paneUrl" DefaultValue="https://marbeo-cyber.github.io/aura-appendice-c/outlook/taskpane.html"/>
+      </bt:Urls>
+      <bt:ShortStrings>
+        <bt:String id="gruppoLabel" DefaultValue="AURA"/>
+        <bt:String id="bottoneLabel" DefaultValue="Lo strumento"/>
+      </bt:ShortStrings>
+      <bt:LongStrings>
+        <bt:String id="bottoneTip" DefaultValue="Stima la distanza fra le letture di ruolo delle parole del messaggio e, se serve, compone una nota rivolta a chi legge."/>
+      </bt:LongStrings>
+    </Resources>
+  </VersionOverrides>
+</OfficeApp>
